@@ -1,0 +1,164 @@
+#include "videowindows.h"
+
+#include <QDebug>
+
+videoWindows::videoWindows(QWidget *parent):FuncWindow(parent){}
+
+videoWindows::~videoWindows(){}
+
+//void videoWindows::play()
+//{
+//    //处于未播放状态时，转播放状态
+//    if(playTime == 0)
+//    {
+//        playTime = 1;
+//        mPro->write("pause \n");
+//        timer->start(1000);
+//    }
+//    else if(playTime == 1)   //播放状态转暂停
+//    {
+//        playTime = 2;
+
+//        timer->stop();
+//    }
+//    else if(playTime == 2)
+//    {
+//        playTime = 1;
+//        mPro->write("pause \n");
+//        timer->start(1000);
+//    }
+
+//}
+
+void videoWindows::prevPlay()
+{
+    for(int i = 0; i < fileList.size(); i++)
+    {
+        if(fileList.at(i) == nowFile)
+        {
+            mPro->kill();
+            mPro->waitForFinished();
+            if(i == 0)
+                nowFile = fileList.at(fileList.size() - 1);
+            else
+                nowFile = fileList.at(i - 1);
+
+            QString command = "mplayer  -slave  -quiet     -zoom    -x 600  -y  400 ";
+            mPro->start(command + FilePath + nowFile);
+            break;
+        }
+    }
+}
+
+void videoWindows::nextPlay()
+{
+    for(int i = 0; i < fileList.size(); i++)
+    {
+        if(fileList.at(i) == nowFile)
+        {
+            mPro->kill();
+            mPro->waitForFinished();
+            if(i == fileList.size()-1)
+                nowFile = fileList.at(0);
+            else
+                nowFile = fileList.at(i + 1);
+
+            QString command = "mplayer  -slave  -quiet     -zoom    -x 600  -y  400 ";
+            mPro->start(command + FilePath + nowFile);
+            break;
+        }
+    }
+}
+
+//void videoWindows::quickRetreat()
+//{
+//    mPro->write("seek -2\n");
+//    if(precent >= 2)
+//        precent -= 2;
+//    else
+//        precent = 0;
+//}
+
+//void videoWindows::fastForward()
+//{
+//    mPro->write("seek +2\n");
+//    if(precent <= 98)
+//        precent += 2;
+//    else
+//        precent = 100;
+
+//}
+
+//void videoWindows::VolumePlus()
+//{
+//    mPro->write("volume +5\n");
+
+//}
+
+//void videoWindows::volumeDN()
+//{
+//    mPro->write("volume -5\n");
+//}
+
+//退出
+//void videoWindows::out()
+//{
+////    mPro->kill();
+////    mPro->waitForFinished();
+//    //退出播放器
+//    mPro->write("quit 0\n");
+//    //停止定时器
+//    timer->stop();
+
+//    //所有参数复位
+//    state = 1;
+//    playTime = 0;
+//    allTime = 0;
+//    precent = 0;
+
+//    emit reflashRate(precent);
+//    //隐藏当前窗体
+//    this->hide();
+//    //显示当前窗体的父亲
+//    this->parentWidget()->show();
+//}
+
+//获取当前进度
+//void videoWindows::getRate()
+//{
+//    mPro->write("get_percent_pos \n");
+//}
+
+//信号回调，更新进度条
+//void videoWindows::readData()
+//{
+//    QString msg = mPro->readAll();
+//    if(msg.indexOf("ANS_PERCENT_POSITION") > -1)
+//    {
+//        msg.remove(0, msg.lastIndexOf("=")+1);
+//        precent = msg.toInt();
+
+//        emit reflashRate(precent);
+//    }
+//    else if(msg.indexOf("ANS_LENGTH") > -1)
+//    {
+//        //获取总的时间
+//        msg.remove(0, msg.lastIndexOf("=")+1);
+//        allTime = msg.toDouble();
+//    }
+
+//}
+
+//读取文件列表并刷新
+void videoWindows::readFileName()
+{
+    if(!fileList.isEmpty())
+        fileList.clear();
+
+    QDir vidFile(FilePath);
+    //将所有需要的文件读取出来
+    fileList = vidFile.entryList().filter(".mp4");
+
+    refreshList();
+}
+
