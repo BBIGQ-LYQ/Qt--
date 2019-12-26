@@ -26,7 +26,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">MainWIndow{background-image: url(:/pic/1.jpeg);}</string>
+   <string notr="true">MainWindow{background-image: url(:/pic/1.jpeg);}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="layoutWidget">
